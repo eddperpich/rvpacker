@@ -23,7 +23,7 @@ require 'fileutils'
 require 'zlib'
 require 'pp'
 require 'formatador'
-
+require 'infinitefusion/fusion'
 module RGSS
   def self.change_extension(file, new_ext)
     return File.basename(file, '.*') + new_ext
@@ -87,6 +87,7 @@ module RGSS
 
   def self.load_data_file(file)
     File.open(file, "rb") do |f|
+      formatador = Formatador.new
       return Marshal.load(f)
     end
   end
@@ -172,10 +173,9 @@ module RGSS
     formatador = Formatador.new
     src_file = File.join(dirs[:data], src)
     dest_file = File.join(dirs[:yaml], dest)
-    raise "Missing #{src}" unless File.exists?(src_file)
-
+    raise "Missing #{src}" unless File.exist?(src_file)
     script_entries = load(:load_data_file, src_file)
-    check_time = !options[:force] && File.exists?(dest_file)
+    check_time = !options[:force] && File.exist?(dest_file)
     oldest_time = File.mtime(dest_file) if check_time
 
     file_map, script_index, script_code = Hash.new(-1), [], {}
@@ -194,7 +194,7 @@ module RGSS
         script_index.push([magic_number, script_name, actual_filename])
         full_filename = File.join(dirs[:script], actual_filename)
         script_code[full_filename] = code
-        check_time = false unless File.exists?(full_filename)
+        check_time = false unless File.exist?(full_filename)
         oldest_time = [File.mtime(full_filename), oldest_time].min if check_time
       else
         script_index.push([magic_number, script_name, nil])
@@ -215,8 +215,8 @@ module RGSS
     formatador = Formatador.new
     src_file = File.join(dirs[:yaml], src)
     dest_file = File.join(dirs[:data], dest)
-    raise "Missing #{src}" unless File.exists?(src_file)
-    check_time = !options[:force] && File.exists?(dest_file)
+    raise "Missing #{src}" unless File.exist?(src_file)
+    check_time = !options[:force] && File.exist?(dest_file)
     newest_time = File.mtime(src_file) if check_time
 
     index = load(:load_yaml_file, src_file)
@@ -226,7 +226,7 @@ module RGSS
       code = ''
       if filename
         full_filename = File.join(dirs[:script], filename)
-        raise "Missing script file #{filename}" unless File.exists?(full_filename)
+        raise "Missing script file #{filename}" unless File.exist?(full_filename)
         newest_time = [File.mtime(full_filename), newest_time].max if check_time
         code = load(:load_raw_file, full_filename)
       end
@@ -245,19 +245,22 @@ module RGSS
     fbase = File.basename(file, File.extname(file))
     return if (! options[:database].nil? ) and (options[:database].downcase != fbase.downcase)
     src_time = File.mtime(src_file)
-    if !options[:force] && File.exists?(dest_file) && (src_time - 1) < File.mtime(dest_file)
+    begin
+    if !options[:force] && File.exist?(dest_file) && (src_time - 1) < File.mtime(dest_file)
       formatador.display_line("[yellow]Skipping #{file}[/]") if $VERBOSE
     else
       formatador.display_line("[green]Converting #{file} to #{dest_ext}[/]") if $VERBOSE
       data = load(loader, src_file)
       dump(dumper, dest_file, data, src_time, options)
+      end
+      rescue ArgumentError
+        formatador.display_line("[_yellow_] Could not convert #{file} due to ArgumentError")
     end
   end
 
   def self.convert(src, dest, options)
     files = files_with_extension(src[:directory], src[:ext])
     files -= src[:exclude]
-
     files.each do |file|
       src_file = File.join(src[:directory], file)
       dest_file = File.join(dest[:directory], change_extension(file, dest[:ext]))
@@ -312,7 +315,7 @@ module RGSS
     }
 
     dirs.values.each do |d|
-      FileUtils.mkdir(d) unless File.exists?(d)
+      FileUtils.mkdir(d) unless File.exist?(d)
     end
 
     exts = {
@@ -353,7 +356,6 @@ module RGSS
     else
       convert_saves = false
     end
-
     case direction
     when :data_bin_to_text
       convert(data, yaml, options)

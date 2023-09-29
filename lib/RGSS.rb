@@ -72,8 +72,16 @@ class Table
 end
 
 class Color
-  def initialize(bytes)
-    @r, @g, @b, @a = *bytes.unpack('D4')
+  def initialize(bytes, g = nil, b = nil)
+    # massive hack to support triple param color
+    if g && b
+      @r = bytes
+      @g = g
+      @b = b
+      @a = 255
+    else
+      @r, @g, @b, @a = *bytes.unpack('D4')
+    end
   end
 
   def _dump(*ignored)
@@ -161,6 +169,9 @@ module RGSS
     end
   end
 
+  # require 'infinitefusion/fusion'
+
+  # Object.const_set(:PokemonDataBox, PokemonDataBox) unless Object.const_defined?(name, false)
   # other classes that don't need definitions
   [ # RGSS data structures
    [:RPG, :Actor], [:RPG, :Animation], [:RPG, :Animation, :Frame],
@@ -182,8 +193,13 @@ module RGSS
    [:Game_Follower], [:Game_Followers], [:Game_Interpreter], [:Game_Map],
    [:Game_Message], [:Game_Party], [:Game_Picture], [:Game_Pictures], [:Game_Player],
    [:Game_System], [:Game_Timer], [:Game_Troop], [:Game_Screen], [:Game_Vehicle],
-   [:Interpreter]
+   [:Interpreter],
+   [:PokemonDataCopy],
+   [:PBAnimations]
+   # coughing up classes for fusion
+   # [:PokemonDataBox, :Graphic]
   ].each {|x| process(Object, *x)}
+
 
   def self.setup_system(version, options)
     # convert variable and switch name arrays to a hash when serialized
