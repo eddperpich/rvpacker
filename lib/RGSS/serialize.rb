@@ -23,7 +23,6 @@ require 'fileutils'
 require 'zlib'
 require 'pp'
 require 'formatador'
-require 'infinitefusion/fusion'
 module RGSS
   def self.change_extension(file, new_ext)
     return File.basename(file, '.*') + new_ext
