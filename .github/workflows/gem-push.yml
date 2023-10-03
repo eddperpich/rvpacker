@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build + Publish
-    runs-on: [self-hosted, linux, arm64]
+    runs-on: [self-hosted]
     permissions:
       contents: read
       packages: write
