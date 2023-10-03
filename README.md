@@ -57,6 +57,11 @@ To take a previously unpacked project, and pack it back up:
 
 ... This will take all of the yaml files in (PROJECT)/YAML and all the scripts in (PROJECT)/Scripts, and repack all of your (PROJECT)/Data/* files. You can trust this to completely reassemble your Data/ directory, so long as the Scripts/ and YAML/ directories remain intact.
 
+To convert a specific file or files under `project/Data`:
+
+    `rvpacker --action unpack --project ..\infinitefusion-e18\ -f --project-type xp --verbose -l Map001.rxdata Map002.rxdata`
+
+... This will convert only Map001.rxdata and Map002.rxdata
 Workflow : General
 ========
 
