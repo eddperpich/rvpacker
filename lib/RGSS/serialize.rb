@@ -363,7 +363,7 @@ module RGSS
       scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
     when :scripts_text_to_bin
       scripts_to_binary(dirs, yaml_scripts, scripts, options) if convert_scripts
-      # below are only options used by rvpacker
+      # below are only options used by fusionpacker
     when :all_bin_to_text
       convert(data, yaml, options)
       scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
