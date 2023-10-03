@@ -1,15 +1,15 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'rvpacker/version'
+require 'fusionpacker/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'rvpacker'
-  spec.version       = Rvpacker::VERSION
-  spec.authors       = ["Howard Jeng", "Andrew Kesterson", 'Solistra']
-  spec.email         = ['solistra@gmx.com']
-  spec.summary       = %q{Pack and unpack RPG Maker data files}
-  spec.homepage      = "https://github.com/Solistra/rvpacker"
+  spec.name          = 'fusionpacker'
+  spec.version       = Fusionpacker::VERSION
+  spec.authors       = ["Howard Jeng", "Andrew Kesterson", 'Solistra', 'eddperpich']
+  spec.email         = ['eddperpich@gmail.com']
+  spec.summary       = %q{Pack and unpack RPG Maker data files, for use on pokemon infinite fusion}
+  spec.homepage      = "https://github.com/homie-estate/fusionpacker"
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")

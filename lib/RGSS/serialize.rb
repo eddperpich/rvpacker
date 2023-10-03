@@ -34,7 +34,7 @@ module RGSS
   end
 
   def self.files_with_extension(directory, extension)
-    return Dir.entries(directory).select{|file| File.extname(file) == extension}
+    return Dir.entries(directory).select { |file| File.extname(file) == extension }
   end
 
   def self.inflate(str)
@@ -45,7 +45,6 @@ module RGSS
   def self.deflate(str)
     return Zlib::Deflate.deflate(str, Zlib::BEST_COMPRESSION)
   end
-
 
   def self.dump_data_file(file, data, time, options)
     File.open(file, "wb") do |f|
@@ -84,10 +83,8 @@ module RGSS
     raise
   end
 
-
   def self.load_data_file(file)
     File.open(file, "rb") do |f|
-      formatador = Formatador.new
       return Marshal.load(f)
     end
   end
@@ -103,36 +100,36 @@ module RGSS
     seen = {}
     idx =
       obj.each do |elem|
-      next if elem.nil?
-      if elem.instance_variable_defined?("@id")
-        id = elem.instance_variable_get("@id")
-      else
-        id = nil
-        elem.instance_variable_set("@id", nil)
-      end
-      next if id.nil?
+        next if elem.nil?
+        if elem.instance_variable_defined?("@id")
+          id = elem.instance_variable_get("@id")
+        else
+          id = nil
+          elem.instance_variable_set("@id", nil)
+        end
+        next if id.nil?
 
-      if seen.has_key?(id)
-        formatador.display_line("[red]#{file}: Duplicate ID #{id}[/]")
-        formatador.indent {
+        if seen.has_key?(id)
+          formatador.display_line("[red]#{file}: Duplicate ID #{id}[/]")
           formatador.indent {
-            elem.pretty_inspect.split(/\n/).each do |line|
-              formatador.display_line("[red]#{line}[/]")
-            end
+            formatador.indent {
+              elem.pretty_inspect.split(/\n/).each do |line|
+                formatador.display_line("[red]#{line}[/]")
+              end
+            }
+            formatador.display_line
+            formatador.display_line("[red]Last seen at:\n[/]")
+            formatador.indent {
+              elem.pretty_inspect.split(/\n/).each do |line|
+                formatador.display_line("[red]#{line}[/]")
+              end
+            }
           }
-          formatador.display_line
-          formatador.display_line("[red]Last seen at:\n[/]")
-          formatador.indent {
-            elem.pretty_inspect.split(/\n/).each do |line|
-              formatador.display_line("[red]#{line}[/]")
-            end
-          }
-        }
-        exit
+          exit
+        end
+        seen[id] = elem
+        max = ((id + 1) unless id < max)
       end
-      seen[id] = elem
-      max = ((id + 1) unless id < max)
-    end
     obj.each do |elem|
       next if elem.nil?
       id = elem.instance_variable_get("@id")
@@ -168,7 +165,6 @@ module RGSS
     raise
   end
 
-
   def self.scripts_to_text(dirs, src, dest, options)
     formatador = Formatador.new
     src_file = File.join(dirs[:data], src)
@@ -180,7 +176,7 @@ module RGSS
 
     file_map, script_index, script_code = Hash.new(-1), [], {}
 
-    idx=0
+    idx = 0
     script_entries.each do |script|
       idx += 1
       magic_number, script_name, code = idx, script[1], inflate(script[2])
@@ -207,7 +203,7 @@ module RGSS
     else
       formatador.display_line("[green]Converting scripts to text[/]") if $VERBOSE
       dump(:dump_yaml_file, dest_file, script_index, src_time, options)
-      script_code.each {|file, code| dump(:dump_raw_file, file, code, src_time, options)}
+      script_code.each { |file, code| dump(:dump_raw_file, file, code, src_time, options) }
     end
   end
 
@@ -243,28 +239,30 @@ module RGSS
   def self.process_file(file, src_file, dest_file, dest_ext, loader, dumper, options)
     formatador = Formatador.new
     fbase = File.basename(file, File.extname(file))
-    return if (! options[:database].nil? ) and (options[:database].downcase != fbase.downcase)
     src_time = File.mtime(src_file)
     begin
-    if !options[:force] && File.exist?(dest_file) && (src_time - 1) < File.mtime(dest_file)
-      formatador.display_line("[yellow]Skipping #{file}[/]") if $VERBOSE
-    else
-      formatador.display_line("[green]Converting #{file} to #{dest_ext}[/]") if $VERBOSE
-      data = load(loader, src_file)
-      dump(dumper, dest_file, data, src_time, options)
+      if !options[:force] && File.exist?(dest_file) && (src_time - 1) < File.mtime(dest_file)
+        formatador.display_line("[yellow]Skipping #{file}[/]") if $VERBOSE
+      else
+        formatador.display_line("[green]Converting #{file} to #{dest_ext}[/]") if $VERBOSE
+        data = load(loader, src_file)
+        dump(dumper, dest_file, data, src_time, options)
       end
-      rescue ArgumentError
-        formatador.display_line("[_yellow_] Could not convert #{file} due to ArgumentError")
+    rescue ArgumentError
+      formatador.display_line("[_yellow_] Could not convert #{file} due to ArgumentError")
     end
   end
 
   def self.convert(src, dest, options)
-    files = files_with_extension(src[:directory], src[:ext])
+    f = Formatador.new
+    f.display_line("[green]#{options[:files].join('|')}")
+    files = options[:files]
+    files ||= Dir.entries(src[:directory])
+    files = files.select { |file| File.extname(file) == src[:ext] }
     files -= src[:exclude]
     files.each do |file|
       src_file = File.join(src[:directory], file)
       dest_file = File.join(dest[:directory], change_extension(file, dest[:ext]))
-
       process_file(file, src_file, dest_file, dest[:ext], src[:load_file],
                    dest[:dump_file], options)
     end
@@ -308,9 +306,9 @@ module RGSS
     base = File.realpath(directory)
 
     dirs = {
-      :base   => base,
-      :data   => get_data_directory(base),
-      :yaml   => get_yaml_directory(base),
+      :base => base,
+      :data => get_data_directory(base),
+      :yaml => get_yaml_directory(base),
       :script => get_script_directory(base)
     }
 
@@ -320,15 +318,15 @@ module RGSS
 
     exts = {
       :ace => ACE_DATA_EXT,
-      :vx  => VX_DATA_EXT,
-      :xp  => XP_DATA_EXT
+      :vx => VX_DATA_EXT,
+      :xp => XP_DATA_EXT
     }
 
     yaml_scripts = SCRIPTS_BASE + YAML_EXT
     yaml = {
       :directory => dirs[:yaml],
-      :exclude   => [yaml_scripts],
-      :ext       => YAML_EXT,
+      :exclude => [yaml_scripts],
+      :ext => YAML_EXT,
       :load_file => :load_yaml_file,
       :dump_file => :dump_yaml_file,
       :load_save => :load_yaml_file,
@@ -338,25 +336,19 @@ module RGSS
     scripts = SCRIPTS_BASE + exts[version]
     data = {
       :directory => dirs[:data],
-      :exclude   => [scripts],
-      :ext       => exts[version],
+      :exclude => [scripts],
+      :ext => exts[version],
       :load_file => :load_data_file,
       :dump_file => :dump_data_file,
       :load_save => :load_save,
       :dump_save => :dump_save
     }
 
-    if options[:database].nil? or options[:database].downcase == 'scripts'
-      convert_scripts = true
-    else
-      convert_scripts = false
-    end
-    if options[:database].nil? or options[:database].downcase == 'saves'
-      convert_saves = true
-    else
-      convert_saves = false
-    end
+    convert_saves = options[:database][:saves]
+    convert_scripts = options[:database][:scripts]
+
     case direction
+      # below were not used in rv packer
     when :data_bin_to_text
       convert(data, yaml, options)
       scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
@@ -371,6 +363,7 @@ module RGSS
       scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts
     when :scripts_text_to_bin
       scripts_to_binary(dirs, yaml_scripts, scripts, options) if convert_scripts
+      # below are only options used by fusionpacker
     when :all_bin_to_text
       convert(data, yaml, options)
       scripts_to_text(dirs, scripts, yaml_scripts, options) if convert_scripts

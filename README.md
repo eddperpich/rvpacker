@@ -1,13 +1,20 @@
-rvpacker
+rvpacker (fusion mode)
 ======================
 
-A tool to unpack & pack RPGMaker data files into text so they can be version controlled & collaborated on
+A fork of rvpacker altered to work as an automatic development workflow for infinitefusion18.
 
 rvpacker consists of 3 parts:
 
 * RPG library (stub classes for serialization of RPGMaker game data)
 * RGSS library (some more classes for RPGMaker serialization)
 * rvpacker (the script you call on the frontend)
+
+Credit to Solistra
+=================
+
+Homie bundled this all into rvpacker 9 years ago... lets hear it for them.
+
+[Let that mf know](https://github.com/Solistra/rvpacker)
 
 Credit to SiCrane
 =================
@@ -50,6 +57,11 @@ To take a previously unpacked project, and pack it back up:
 
 ... This will take all of the yaml files in (PROJECT)/YAML and all the scripts in (PROJECT)/Scripts, and repack all of your (PROJECT)/Data/* files. You can trust this to completely reassemble your Data/ directory, so long as the Scripts/ and YAML/ directories remain intact.
 
+To convert a specific file or files under `project/Data`:
+
+    `rvpacker --action unpack --project ..\infinitefusion-e18\ -f --project-type xp --verbose -l Map001.rxdata Map002.rxdata`
+
+... This will convert only Map001.rxdata and Map002.rxdata
 Workflow : General
 ========
 
@@ -90,11 +102,7 @@ While this may seem like unnecessary process, it is a reasonable workaround. For
 Automatic ID generation
 =======================
 
-You can add new elements to the YAML files manually, and leave their 'id:' field set to 'null'. This will cause the rvpacker pack action to automatically assign them a new ID number at the end of the sequence (e.g., if you have 17 items, the new one becomes ID 18). This is mainly handy for adding new scripts to the project without having to open the RPG maker and paste the script in; just make the new script file, add its entry in YAML/Scripts.yaml, and the designer will have your script accessible the next time they repack and open the project.
-
-Also, the rvpacker tool sets the ID of script files to an autoincrementing integer. The scripts exist in the database with a magic number that I can't recreate, and nothing in the editor (RPG VX Ace anyway) seems to care if the magic number changes. It doesn't even affect the ordering. So in order to support adding new scripts with null IDs, like everything else, the magic numbers on scripts are disregarded and a new ID number is forced on the scripts when the rvpacker pack action occurs.
-
-Note that this does not apply to Map files. Do not try changing the map ID numbers manually (see the "Avoiding Map Collisions" workflow, above, and "Why rvpacker can't help with map collisions", below).
+(Removed because that's not how Pokemon Essentials reads scripts)
 
 Why rvpacker can't help with map collisions
 ===========================================
