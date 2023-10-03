@@ -3,8 +3,6 @@ name: Ruby Gem
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
   build:
@@ -29,7 +27,7 @@ jobs:
         mkdir -p ${{ runner.temp }}/.gem
         touch ${{ runner.temp }}/.gem/credentials
         chmod 0600 ${{ runner.temp }}/.gem/credentials
-        printf -- "---\n:github: ${EDDIE_RUBY_GEMS}\n" > ${{ runner.temp }}/.gem/credentials
+        printf -- "---\n:github: ${GEM_HOST_API_KEY}\n" > ${{ runner.temp }}/.gem/credentials
         gem build *.gemspec
         gem push --KEY github --host https://rubygems.pkg.github.com/${OWNER} *.gem
       env:
@@ -41,8 +39,8 @@ jobs:
         mkdir -p ${{ runner.temp }}/.gem
         touch ${{ runner.temp }}/.gem/credentials
         chmod 0600 ${{ runner.temp }}/.gem/credentials
-        printf -- "---\n:rubygems_api_key: ${EDDIE_RUBY_GEMS}\n" > ${{ runner.temp }}/.gem/credentials
+        printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > ${{ runner.temp }}/.gem/credentials
         gem build *.gemspec
         gem push *.gem
       env:
-        GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_AUTH_TOKEN}}"
+        GEM_HOST_API_KEY: "${{secrets.EDDIE_RUBY_GEMS}}"
