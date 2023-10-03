@@ -10,7 +10,9 @@ opts = Optimist::options do
   opt :force, "Update target even when source is older than target", :short => "f"
   opt :project_type, "Project type (vx|ace|xp)", :short => "t", :type => String
   opt :verbose, "Print verbose information while processing", :short => "V"
-  opt :database, "Only work on the given database", :short => "D", :type => String
+  opt :scripts, "Convert scripts contained in /project/Scripts", :default => false
+  opt :saves, "Convert saves contained in /project", :default => false
+  opt :files, "Array of files to convert instead, delimited by spaces", :short => "l", :type => :strings
 end
 
 directions = {
@@ -22,7 +24,7 @@ projecttypes = {
   "ace" => :ace,
   "xp" => :xp
 }
-$VERBOSE=opts[:verbose]
+$VERBOSE = opts[:verbose]
 
 RGSS.serialize(projecttypes[opts[:project_type]],
                directions[opts[:action]],
@@ -30,7 +32,8 @@ RGSS.serialize(projecttypes[opts[:project_type]],
                { :force => (opts[:force] ? true : false),
                  :line_width => -1,
                  :table_width => -1,
-                 :database => opts[:database]
+                 :database => { :saves => opts[:saves], :scripts => opts[:scripts] },
+                 :files => opts[:files]
                }
-               )
+)
 
