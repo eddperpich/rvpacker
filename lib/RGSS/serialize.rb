@@ -306,7 +306,7 @@ module RGSS
 
     dirs = {
       :base => base,
-      :data => get_data_directory(base),
+      :data => get_data_directory(base, options[:files]),
       :yaml => get_yaml_directory(base),
       :script => get_script_directory(base)
     }

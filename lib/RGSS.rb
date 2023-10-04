@@ -43,13 +43,13 @@ class Table
       if MAX_ROW_LENGTH != -1 && stride > MAX_ROW_LENGTH
         block_length = (stride + MAX_ROW_LENGTH - 1) / MAX_ROW_LENGTH
         row_length = (stride + block_length - 1) / block_length
-        rows = rows.collect{|x| x.each_slice(row_length).to_a}.flatten(1)
+        rows = rows.collect { |x| x.each_slice(row_length).to_a }.flatten(1)
       end
-      rows = rows.collect{|x| x.collect{|y| "%04x" % y}.join(" ")}
-        coder['data'] = rows
+      rows = rows.collect { |x| x.collect { |y| "%04x" % y }.join(" ") }
+      coder['data'] = rows
     else
       coder['data'] = []
-      end
+    end
   end
 
   def init_with(coder)
@@ -57,7 +57,7 @@ class Table
     @x = coder['x']
     @y = coder['y']
     @z = coder['z']
-    @data = coder['data'].collect{|x| x.split(" ").collect{|y| y.hex}}.flatten
+    @data = coder['data'].collect { |x| x.split(" ").collect { |y| y.hex } }.flatten
     items = @x * @y * @z
     raise "Size mismatch loading Table from YAML" unless items == @data.length
   end
@@ -68,7 +68,7 @@ class Table
 
   def self._load(bytes)
     Table.new(bytes)
-    end
+  end
 end
 
 class Color
@@ -89,7 +89,7 @@ class Color
   end
 
   def self._load(bytes)
-      Color.new(bytes)
+    Color.new(bytes)
   end
 end
 
@@ -173,33 +173,32 @@ module RGSS
 
   # Object.const_set(:PokemonDataBox, PokemonDataBox) unless Object.const_defined?(name, false)
   # other classes that don't need definitions
-  [ # RGSS data structures
-   [:RPG, :Actor], [:RPG, :Animation], [:RPG, :Animation, :Frame],
-   [:RPG, :Animation, :Timing], [:RPG, :Area], [:RPG, :Armor], [:RPG, :AudioFile],
-   [:RPG, :BaseItem], [:RPG, :BaseItem, :Feature], [:RPG, :BGM], [:RPG, :BGS],
-   [:RPG, :Class], [:RPG, :Class, :Learning], [:RPG, :CommonEvent], [:RPG, :Enemy],
-   [:RPG, :Enemy, :Action], [:RPG, :Enemy, :DropItem], [:RPG, :EquipItem],
-   [:RPG, :Event], [:RPG, :Event, :Page], [:RPG, :Event, :Page, :Condition],
-   [:RPG, :Event, :Page, :Graphic], [:RPG, :Item], [:RPG, :Map],
-   [:RPG, :Map, :Encounter], [:RPG, :MapInfo], [:RPG, :ME], [:RPG, :MoveCommand],
-   [:RPG, :MoveRoute], [:RPG, :SE], [:RPG, :Skill], [:RPG, :State],
-   [:RPG, :System, :Terms], [:RPG, :System, :TestBattler], [:RPG, :System, :Vehicle],
-   [:RPG, :System, :Words], [:RPG, :Tileset], [:RPG, :Troop], [:RPG, :Troop, :Member],
-   [:RPG, :Troop, :Page], [:RPG, :Troop, :Page, :Condition], [:RPG, :UsableItem],
-   [:RPG, :UsableItem, :Damage], [:RPG, :UsableItem, :Effect], [:RPG, :Weapon],
-   # Script classes serialized in save game files
-   [:Game_ActionResult], [:Game_Actor], [:Game_Actors], [:Game_BaseItem],
-   [:Game_BattleAction], [:Game_CommonEvent], [:Game_Enemy], [:Game_Event],
-   [:Game_Follower], [:Game_Followers], [:Game_Interpreter], [:Game_Map],
-   [:Game_Message], [:Game_Party], [:Game_Picture], [:Game_Pictures], [:Game_Player],
-   [:Game_System], [:Game_Timer], [:Game_Troop], [:Game_Screen], [:Game_Vehicle],
-   [:Interpreter],
-   [:PokemonDataCopy],
-   [:PBAnimations]
-   # coughing up classes for fusion
-   # [:PokemonDataBox, :Graphic]
-  ].each {|x| process(Object, *x)}
-
+  [# RGSS data structures
+    [:RPG, :Actor], [:RPG, :Animation], [:RPG, :Animation, :Frame],
+    [:RPG, :Animation, :Timing], [:RPG, :Area], [:RPG, :Armor], [:RPG, :AudioFile],
+    [:RPG, :BaseItem], [:RPG, :BaseItem, :Feature], [:RPG, :BGM], [:RPG, :BGS],
+    [:RPG, :Class], [:RPG, :Class, :Learning], [:RPG, :CommonEvent], [:RPG, :Enemy],
+    [:RPG, :Enemy, :Action], [:RPG, :Enemy, :DropItem], [:RPG, :EquipItem],
+    [:RPG, :Event], [:RPG, :Event, :Page], [:RPG, :Event, :Page, :Condition],
+    [:RPG, :Event, :Page, :Graphic], [:RPG, :Item], [:RPG, :Map],
+    [:RPG, :Map, :Encounter], [:RPG, :MapInfo], [:RPG, :ME], [:RPG, :MoveCommand],
+    [:RPG, :MoveRoute], [:RPG, :SE], [:RPG, :Skill], [:RPG, :State],
+    [:RPG, :System, :Terms], [:RPG, :System, :TestBattler], [:RPG, :System, :Vehicle],
+    [:RPG, :System, :Words], [:RPG, :Tileset], [:RPG, :Troop], [:RPG, :Troop, :Member],
+    [:RPG, :Troop, :Page], [:RPG, :Troop, :Page, :Condition], [:RPG, :UsableItem],
+    [:RPG, :UsableItem, :Damage], [:RPG, :UsableItem, :Effect], [:RPG, :Weapon],
+    # Script classes serialized in save game files
+    [:Game_ActionResult], [:Game_Actor], [:Game_Actors], [:Game_BaseItem],
+    [:Game_BattleAction], [:Game_CommonEvent], [:Game_Enemy], [:Game_Event],
+    [:Game_Follower], [:Game_Followers], [:Game_Interpreter], [:Game_Map],
+    [:Game_Message], [:Game_Party], [:Game_Picture], [:Game_Pictures], [:Game_Player],
+    [:Game_System], [:Game_Timer], [:Game_Troop], [:Game_Screen], [:Game_Vehicle],
+    [:Interpreter],
+    [:PokemonDataCopy],
+    [:PBAnimations]
+  # coughing up classes for fusion
+  # [:PokemonDataBox, :Graphic]
+  ].each { |x| process(Object, *x) }
 
   def self.setup_system(version, options)
     # convert variable and switch name arrays to a hash when serialized
@@ -211,10 +210,10 @@ module RGSS
       reset_method(Game_System, :map_version, iso)
     else
       reset_method(RPG::System, :reduce_string, ->(str) {
-                               return nil if str.nil?
-                               stripped = str.strip
-                               return stripped.empty? ? nil : stripped
-                             })
+        return nil if str.nil?
+        stripped = str.strip
+        return stripped.empty? ? nil : stripped
+      })
       # These magic numbers should be different. If they are the same, the saved version
       # of the map in save files will be used instead of any updated version of the map
       reset_method(RPG::System, :map_version, ->(ignored) { return 12345678 })
@@ -225,14 +224,14 @@ module RGSS
   def self.setup_interpreter(version)
     # Game_Interpreter is marshalled differently in VX Ace
     if version == :ace
-      reset_method(Game_Interpreter, :marshal_dump, ->{
-                               return @data
-                             })
+      reset_method(Game_Interpreter, :marshal_dump, -> {
+        return @data
+      })
       reset_method(Game_Interpreter, :marshal_load, ->(obj) {
-                               @data = obj
-                             })
+        @data = obj
+      })
     else
-        remove_defined_method(Game_Interpreter, :marshal_dump)
+      remove_defined_method(Game_Interpreter, :marshal_dump)
       remove_defined_method(Game_Interpreter, :marshal_load)
     end
   end
@@ -240,11 +239,11 @@ module RGSS
   def self.setup_event_command(version, options)
     # format event commands to flow style for the event codes that aren't move commands
     if options[:round_trip]
-      reset_method(RPG::EventCommand, :clean, ->{})
+      reset_method(RPG::EventCommand, :clean, -> {})
     else
-      reset_method(RPG::EventCommand, :clean, ->{
-                               @parameters[0].rstrip! if @code == 401
-                             })
+      reset_method(RPG::EventCommand, :clean, -> {
+        @parameters[0].rstrip! if @code == 401
+      })
     end
     reset_const(RPG::EventCommand, :MOVE_LIST_CODE, version == :xp ? 209 : 205)
   end
@@ -261,13 +260,13 @@ module RGSS
   SCRIPTS_BASE = 'Scripts'
 
   ACE_DATA_EXT = '.rvdata2'
-  VX_DATA_EXT  = '.rvdata'
-  XP_DATA_EXT  = '.rxdata'
-  YAML_EXT     = '.yaml'
-  RUBY_EXT     = '.rb'
+  VX_DATA_EXT = '.rvdata'
+  XP_DATA_EXT = '.rxdata'
+  YAML_EXT = '.yaml'
+  RUBY_EXT = '.rb'
 
-  def self.get_data_directory(base)
-    return File.join(base, 'Data')
+  def self.get_data_directory(base, files)
+    return files && base || File.join(base, 'Data')
   end
 
   def self.get_yaml_directory(base)
@@ -306,17 +305,17 @@ module RGSS
     include RGSS::BasicCoder
 
     def encode(name, value)
-      return Hash[value.collect {|pair|
-                    key, value = pair
-                    next ["%03d %03d %s" % key, value]
-                  }]
+      return Hash[value.collect { |pair|
+        key, value = pair
+        next ["%03d %03d %s" % key, value]
+      }]
     end
 
     def decode(name, value)
-      return Hash[value.collect {|pair|
-                    key, value = pair
-                    next [key.scanf("%d %d %s"), value]
-                  }]
+      return Hash[value.collect { |pair|
+        key, value = pair
+        next [key.scanf("%d %d %s"), value]
+      }]
     end
   end
 

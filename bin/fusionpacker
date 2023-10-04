@@ -12,7 +12,7 @@ opts = Optimist::options do
   opt :verbose, "Print verbose information while processing", :short => "V"
   opt :scripts, "Convert scripts contained in /project/Scripts", :default => false
   opt :saves, "Convert saves contained in /project", :default => false
-  opt :files, "Array of files to convert instead, delimited by spaces", :short => "l", :type => :strings
+  opt :files, "Array of files to convert instead, delimited by spaces. If this argument is present, paths to files are resolved from --project directory", :short => "l", :type => :strings
 end
 
 directions = {
